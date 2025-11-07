@@ -107,7 +107,7 @@ RegisterNetEvent('pinkFrog_syncClonePed', function(open, inv, player, selfOpen, 
             TriggerEvent('pinkFrog:removeClonedPedFromOxInventory')
         else 
             SendNUIMessage({ action = 'displayDivider', data = { visible = false } })
-            TriggerEvent('pinkFrog:removeClonedPedFromOxInventory')
+               TriggerEvent('pinkFrog:removeClonedPedFromOxInventory')
         end
     end
 end)

@@ -726,9 +726,20 @@ local function useButton(id, slot)
             action = 'throwItem'
 		    })
 	        end
+
+			if data.canPlaceOnGround then
+                table.insert(buttons, {
+                    label = locales['PLACE_ITEM_ON_GROUND'],
+                    action = 'placeItemOnGround'
+                })
+            end
+			
+			
 			
             data.buttons = buttons
         end
+
+
 
         if buttons and buttons[id] then
             if type(buttons[id].action) == 'function' then
@@ -739,6 +750,8 @@ local function useButton(id, slot)
                 TriggerEvent('pinkFrog:changeItemDescription', slot)
 			elseif buttons[id].action == 'throwItem' then
             TriggerEvent('pinkFrog:throwItem', slot, item.name, data.propThrow, data.weight)
+			elseif buttons[id].action == 'placeItemOnGround' then 
+				TriggerEvent('pinkFrog:placeItemOnGround', slot, item.name,  data.propThrow, data.weight)
             end
         end
     end
@@ -917,6 +930,7 @@ function client.closeInventory(server)
 
 	if invOpen then
 		invOpen = nil
+		TriggerEvent('pinkFrog_syncClonePed', nil, false)
 		SetNuiFocus(false, false)
 		SetNuiFocusKeepInput(false)
 		TriggerScreenblurFadeOut(0)
@@ -1267,6 +1281,7 @@ for _, v in pairs(Items --[[@as table<string, OxClientItem>]]) do
     end
 
 
+
 	
 	if v.canThrow then
     table.insert(buttons, {
@@ -1274,6 +1289,14 @@ for _, v in pairs(Items --[[@as table<string, OxClientItem>]]) do
         action = 'throwItem'
     })
 end
+
+	if v.canPlaceOnGround then
+	table.insert(buttons, {
+		label = locales['PLACE_ITEM_ON_GROUND'],
+		action = 'placeItemOnGround'
+	})
+	end
+
 
 
     if v.buttons then

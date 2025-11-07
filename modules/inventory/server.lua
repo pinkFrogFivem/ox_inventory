@@ -31,7 +31,7 @@ end
 function OxInventory:closeInventory(noEvent)
 	if not self.player or not self.open then return end
 
-	TriggerClientEvent('pinkFrog_syncClonePed',  self.id, false, self.player, self.open, noEvent)
+	
 
 	local inv = Inventory(self.open)
 

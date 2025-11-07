@@ -12,9 +12,10 @@ end
 -- You did read the docs, right? Probably not, if you're here.
 -- https://overextended.dev/ox_inventory#config
 
+-- frameworks: esx, nd, ox, qb, qbox  (if you are using qbcore you need to set qb) in shared framework convar
 shared = {
     resource = GetCurrentResourceName(),
-    framework = GetConvar('inventory:framework', 'esx'),
+    framework = GetConvar('inventory:framework', 'qbox'),
     playerslots = GetConvarInt('inventory:slots', 64),
     playerweight = GetConvarInt('inventory:weight', 30000),
     target = GetConvarInt('inventory:target', 0) == 0,
@@ -96,7 +97,7 @@ else
         itemnotify = GetConvarInt('inventory:itemnotify', 1) == 1,
         weaponnotify = GetConvarInt('inventory:weaponnotify', 1) == 1,
         imagepath = GetConvar('inventory:imagepath', 'nui://ox_inventory/web/images'),
-        dropprops = GetConvarInt('inventory:dropprops', 0) == 1,
+        dropprops = GetConvarInt('inventory:dropprops', 0) == 0,
         dropmodel = joaat(GetConvar('inventory:dropmodel', 'prop_med_bag_01b')),
         weaponmismatch = GetConvarInt('inventory:weaponmismatch', 1) == 1,
         ignoreweapons = json.decode(GetConvar('inventory:ignoreweapons', '[]')),

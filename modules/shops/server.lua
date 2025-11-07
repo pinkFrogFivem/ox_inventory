@@ -182,7 +182,14 @@ end
 
 lib.callback.register('ox_inventory:buyItem', function(source, data, payment)
 	local ESX, QBCore, vRP
-	if exports['pinkFrog_inventoryAddon']:getFramework() == 'ESX' then ESX = exports["es_extended"]:getSharedObject() elseif exports['pinkFrog_inventoryAddon']:getFramework() == 'QB' then QBCore = exports['qb-core']:GetCoreObject() elseif exports['pinkFrog_inventoryAddon']:getFramework() == 'VRP' then vRP = exports['vrp']:getInterface('vRP') end
+	if exports['pinkFrog_inventoryAddon']:getFramework() == 'ESX' then
+		ESX = exports["es_extended"]:getSharedObject()
+	elseif exports['pinkFrog_inventoryAddon']:getFramework() == 'QB' or exports['pinkFrog_inventoryAddon']:getFramework() == 'QBOX' then
+		QBCore = exports['qb-core']:GetCoreObject()
+	elseif exports['pinkFrog_inventoryAddon']:getFramework() == 'VRP' then
+		vRP = exports['vrp']:getInterface('vRP')
+	end
+	
 
 	if data.toType == 'player' then
 		if data.count == nil then data.count = 1 end
@@ -250,11 +257,14 @@ lib.callback.register('ox_inventory:buyItem', function(source, data, payment)
 						local Player = QBCore.Functions.GetPlayer(source)
 						canAfford = Player and Player.PlayerData.money['bank'] and Player.PlayerData.money['bank'] >= price
 					elseif exports['pinkFrog_inventoryAddon']:getFramework() == 'QBOX' then
-						local player = QBCore.Functions.GetPlayer(source)
-						canAfford = Player and Player.PlayerData.money['bank'] and Player.PlayerData.money['bank'] >= price
+						local player = exports.qbx_core:GetPlayer(source)
+						canAfford = player and player.PlayerData.money['bank'] and player.PlayerData.money['bank'] >= price
 					elseif exports['pinkFrog_inventoryAddon']:getFramework() == 'VRP' then
 					    local user_id = vRP.getUserId(source)
 						canAfford = vRP.getBankMoney(user_id) >= price
+					elseif exports['pinkFrog_inventoryAddon']:getFramework() == 'QBOX' then
+						local player = QBCore.Functions.GetPlayer(source)
+						canAfford = player and player.PlayerData.money['bank'] and player.PlayerData.money['bank'] >= price
 					end
 
 	
@@ -300,11 +310,14 @@ lib.callback.register('ox_inventory:buyItem', function(source, data, payment)
 						local Player = QBCore.Functions.GetPlayer(source)
 						if Player then Player.Functions.RemoveMoney('bank', price, 'shop-buy') end
 					elseif exports['pinkFrog_inventoryAddon']:getFramework() == 'QBOX' then
-						local player = QBCore.Functions.GetPlayer(source)
+						local player = exports.qbx_core:GetPlayer(source)
 						if player then player.Functions.RemoveMoney('bank', price, 'shop-buy') end
 					elseif exports['pinkFrog_inventoryAddon']:getFramework() == 'VRP' then
 						local user_id = vRP.getUserId(source)
 						vRP.tryBankPayment(user_id, price)
+					elseif exports['pinkFrog_inventoryAddon']:getFramework() == 'QBOX' then
+						local player = QBCore.Functions.GetPlayer(source)
+						if player then player.Functions.RemoveMoney('bank', price, 'shop-buy') end
 					end
 				end
 

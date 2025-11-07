@@ -36,6 +36,7 @@ return {
 		canRename = true, -- if true, then you can rename this item (only if Config.canRenameAllItems = false in config.lua)
 	    canChangeDescription = true, -- if true, then you can change description for this item (only if Config.canChangeDescription = false in config.lua)
 		canThrow = true, -- if true, then you can throw this item (only if Config.throwingSettings.enable = true in pinkFrog_inventoryAddon/config.lua)
+		canPlaceOnGround = true, -- if true, then you can place this item on the ground and takes prop from propThrow
 		propThrow = 'prop_nigel_bag_pickup', -- prop to show when you throw item (only if canThrow = true)
 		client = {
 			export = 'pinkFrog_inventoryAddon.useBagClothes',
@@ -258,6 +259,7 @@ return {
 		canThrow = true, -- if true, then you can throw this item (only if Config.throwingSettings.enable = true in pinkFrog_inventoryAddon/config.lua)
 		propThrow = 'prop_cs_burger_01', -- prop to show when you throw item (only if canThrow = true)
 		rarity = 'rare',
+		canPlaceOnGround = true, -- if true, then you can place this item on the ground and takes prop from propThrow
 		canRename = true,
 		canChangeDescription = true,
 		client = {
@@ -477,12 +479,6 @@ return {
 		}
 	},
 
-	['radio'] = {
-		label = 'Radio',
-		weight = 1000,
-		stack = false,
-		allowArmed = true
-	},
 
 	['armour'] = {
 		label = 'Bulletproof Vest',
