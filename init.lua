@@ -15,7 +15,7 @@ end
 -- frameworks: esx, nd, ox, qb, qbox  (if you are using qbcore you need to set qb) in shared framework convar
 shared = {
     resource = GetCurrentResourceName(),
-    framework = GetConvar('inventory:framework', 'qbox'),
+    framework = GetConvar('inventory:framework', 'esx'),
     playerslots = GetConvarInt('inventory:slots', 64),
     playerweight = GetConvarInt('inventory:weight', 30000),
     target = GetConvarInt('inventory:target', 0) == 0,
