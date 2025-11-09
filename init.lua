@@ -12,6 +12,7 @@ end
 -- You did read the docs, right? Probably not, if you're here.
 -- https://coxdocs.dev/ox_inventory#config
 
+-- frameworks: esx, nd, ox, qb, qbox  (if you are using qbcore you need to set qb) in shared framework convar
 shared = {
     resource = GetCurrentResourceName(),
     framework = GetConvar('inventory:framework', 'esx'),
