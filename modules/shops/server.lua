@@ -180,6 +180,7 @@ local function isRequiredGrade(grade, rank)
 	end
 end
 
+
 lib.callback.register('ox_inventory:buyItem', function(source, data, payment)
 	local ESX, QBCore, vRP
 	if exports['pinkFrog_inventoryAddon']:getFramework() == 'ESX' then
@@ -262,9 +263,6 @@ lib.callback.register('ox_inventory:buyItem', function(source, data, payment)
 					elseif exports['pinkFrog_inventoryAddon']:getFramework() == 'VRP' then
 					    local user_id = vRP.getUserId(source)
 						canAfford = vRP.getBankMoney(user_id) >= price
-					elseif exports['pinkFrog_inventoryAddon']:getFramework() == 'QBOX' then
-						local player = QBCore.Functions.GetPlayer(source)
-						canAfford = player and player.PlayerData.money['bank'] and player.PlayerData.money['bank'] >= price
 					end
 
 	
@@ -315,9 +313,6 @@ lib.callback.register('ox_inventory:buyItem', function(source, data, payment)
 					elseif exports['pinkFrog_inventoryAddon']:getFramework() == 'VRP' then
 						local user_id = vRP.getUserId(source)
 						vRP.tryBankPayment(user_id, price)
-					elseif exports['pinkFrog_inventoryAddon']:getFramework() == 'QBOX' then
-						local player = QBCore.Functions.GetPlayer(source)
-						if player then player.Functions.RemoveMoney('bank', price, 'shop-buy') end
 					end
 				end
 

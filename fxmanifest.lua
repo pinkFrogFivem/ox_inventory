@@ -3,9 +3,9 @@ use_experimental_fxv2_oal 'yes'
 lua54 'yes'
 game 'gta5'
 name 'ox_inventory'
-author 'Overextended'
-version '2.44.1'
-repository 'https://github.com/overextended/ox_inventory'
+author 'Overextended & pinkFrog.io'
+version '2.44.8'
+repository 'https://github.com/pinkFrogFivem/ox_inventory'
 description 'Slot-based inventory with item metadata support'
 
 dependencies {
@@ -28,12 +28,11 @@ server_scripts {
     'init.lua'
 }
 
+
 client_scripts{
     'init.lua', 
     'pinkFrog/client/clientPinkFrog.lua',
 }
-
-
 
 ui_page 'web/build/index.html'
 

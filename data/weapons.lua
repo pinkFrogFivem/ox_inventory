@@ -608,7 +608,6 @@ return {
 			label = 'Sniper Rifle',
 			weight = 5000,
 			durability = 0.5,
-			rarity = 'legendary',
 			ammoname = 'ammo-sniper'
 		},
 
@@ -635,7 +634,6 @@ return {
 		['WEAPON_SPECIALCARBINE'] = {
 			label = 'Special Carbine',
 			weight = 3000,
-			rarity = 'mythic',
 			durability = 0.03,
 			ammoname = 'ammo-rifle'
 		},
@@ -1880,6 +1878,3 @@ return {
 		},
 	}
 }
-
-
-

@@ -90,7 +90,7 @@ CreateThread(function()
 ]]
 				local fileSize = #file
 
-	       for _, item in pairs(dump) do
+				for _, item in pairs(dump) do
 					if not ItemList[item.name] then
 						fileSize += 1
 
@@ -101,7 +101,6 @@ CreateThread(function()
 						ItemList[item.name] = item
 					end
 				end
-
 
 				file[fileSize+1] = '}'
 

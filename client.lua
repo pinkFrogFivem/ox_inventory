@@ -5,7 +5,7 @@ require 'modules.interface.client'
 
 local Utils = require 'modules.utils.client'
 local Weapon = require 'modules.weapon.client'
-local currentWeapon 
+local currentWeapon
 local actualPaymentType = 'cash'
 
 exports('getCurrentWeapon', function()
@@ -80,9 +80,9 @@ end
 
 local defaultInventory = {
 	type = 'newdrop',
-	slots = shared.playerslots,
+	slots = shared.dropslots,
 	weight = 0,
-	maxWeight = shared.playerweight,
+	maxWeight = shared.dropweight,
 	items = {}
 }
 
@@ -178,10 +178,10 @@ function client.openInventory(inv, data)
         if serverId == cache.serverId then return end
 
         local targetCoords = targetPed and GetEntityCoords(targetPed)
-
-        if not targetCoords or #(targetCoords - GetEntityCoords(playerPed)) > 1.8 or not (client.hasGroup(shared.police) or not Player(serverId).state.canSteal) then
-            return lib.notify({ id = 'inventory_right_access', type = 'error', description = locale('inventory_right_access') })
-        end
+		local canSteal = exports['pinkFrog_inventoryAddon']:canStealPlayers()
+		if not targetCoords or #(targetCoords - GetEntityCoords(playerPed)) > 1.8 or (not canSteal and not client.hasGroup(shared.police) and not Player(serverId).state.canSteal) then
+			return lib.notify({ id = 'inventory_right_access', type = 'error', description = locale('inventory_right_access') })
+		end
     end
 
     if inv == 'shop' and invOpen == false then
@@ -264,13 +264,13 @@ function client.openInventory(inv, data)
     end
 
     plyState.invOpen = true
-
+   TriggerEvent('pinkFrog_syncClonePed', true, inv)
     SetInterval(client.interval, 100)
     SetNuiFocus(true, true)
     SetNuiFocusKeepInput(true)
     closeTrunk()
 
-    if client.screenblur then TriggerScreenblurFadeIn(0) end
+    if client.screenblur then Utils.blurIn() end
 
     currentInventory = right or defaultInventory
     left.items = PlayerData.inventory
@@ -327,7 +327,7 @@ RegisterNetEvent('ox_inventory:forceOpenInventory', function(left, right)
 	SetNuiFocusKeepInput(true)
 	closeTrunk()
 
-	if client.screenblur then TriggerScreenblurFadeIn(0) end
+	if client.screenblur then Utils.blurIn() end
 
 	currentInventory = right or defaultInventory
 	currentInventory.ignoreSecurityChecks = true
@@ -788,10 +788,14 @@ local invHotkeys = false
 
 ---@type function?
 local function registerCommands()
-	RegisterCommand('steal', openNearbyInventory, false)
+	if client.enablestealcommand then
+		RegisterCommand('steal', openNearbyInventory, false)
+	end
 
 	local function openGlovebox(vehicle)
 		if not IsPedInAnyVehicle(playerPed, false) or not NetworkGetEntityIsNetworked(vehicle) then return end
+
+		if IsEntityDead(vehicle) then return end
 
 		local vehicleHash = GetEntityModel(vehicle)
 		local vehicleClass = GetVehicleClass(vehicle)
@@ -903,7 +907,7 @@ local function registerCommands()
 		description = locale('disable_hotbar'),
 		defaultKey = client.keys[3],
 		onPressed = function()
-			if EnableWeaponWheel or IsNuiFocused() or lib.progressActive() then return end
+			if EnableWeaponWheel or not invHotkeys or IsNuiFocused() or lib.progressActive() then return end
 			SendNUIMessage({ action = 'toggleHotbar' })
 		end
 	})
@@ -933,7 +937,7 @@ function client.closeInventory(server)
 		TriggerEvent('pinkFrog_syncClonePed', nil, false)
 		SetNuiFocus(false, false)
 		SetNuiFocusKeepInput(false)
-		TriggerScreenblurFadeOut(0)
+		Utils.blurOut()
 		closeTrunk()
 		SendNUIMessage({ action = 'closeInventory' })
 		SetInterval(client.interval, 200)
@@ -1321,6 +1325,7 @@ end
         image = v.client?.image
     }
 end
+
 	for _, data in pairs(inventory) do
 		local item = Items[data.name]
 
@@ -1334,8 +1339,6 @@ end
 			end
 		end
 	end
-
-
 
 	local phone = Items.phone
 
@@ -1431,7 +1434,10 @@ end
 
 	PlayerData.loaded = true
 
-	lib.notify({ description = locale('inventory_setup') })
+	if not client.disablesetupnotification then
+		lib.notify({ description = locale('inventory_setup') })
+	end
+
 	Shops.refreshShops()
 	Inventory.Stashes()
 	Inventory.Evidence()
@@ -1467,8 +1473,8 @@ end
 						local id = GetPlayerFromServerId(currentInventory.id)
 						local ped = GetPlayerPed(id)
 						local pedCoords = GetEntityCoords(ped)
-
-						if not id or #(playerCoords - pedCoords) > maxDistance or not (client.hasGroup(shared.police) or not Player(currentInventory.id).state.canSteal) then
+						local canSteal = exports['pinkFrog_inventoryAddon']:canStealPlayers()
+						if not id or #(playerCoords - pedCoords) > maxDistance or (not canSteal and not client.hasGroup(shared.police) and not Player(currentInventory.id).state.canSteal) then
 							client.closeInventory()
 							lib.notify({ id = 'inventory_lost_access', type = 'error', description = locale('inventory_lost_access') })
 						else
@@ -1676,7 +1682,7 @@ RegisterNetEvent('ox_inventory:viewInventory', function(left, right)
 	SetNuiFocusKeepInput(true)
 	closeTrunk()
 
-	if client.screenblur then TriggerScreenblurFadeIn(0) end
+	if client.screenblur then Utils.blurIn() end
 
 	currentInventory = right or defaultInventory
 	currentInventory.ignoreSecurityChecks = true
@@ -1955,7 +1961,7 @@ end)
 
 RegisterNUICallback('buyItem', function(data, cb)
 	---@type boolean, false | { [1]: number, [2]: SlotWithItem, [3]: SlotWithItem | false, [4]: number}, NotifyProps
-	local response, data, message = lib.callback.await('ox_inventory:buyItem', 100, data, actualPaymentType)
+	local response, data, message = lib.callback.await('ox_inventory:buyItem', 100, data)
 
 	if data then
 		updateInventory({

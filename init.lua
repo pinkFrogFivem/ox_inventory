@@ -10,15 +10,14 @@ end
 -- Do not modify this file at all. This isn't a "config" file. You want to change
 -- resource settings? Use convars like you were told in the documentation.
 -- You did read the docs, right? Probably not, if you're here.
--- https://overextended.dev/ox_inventory#config
+-- https://coxdocs.dev/ox_inventory#config
 
--- frameworks: esx, nd, ox, qb, qbox  (if you are using qbcore you need to set qb) in shared framework convar
 shared = {
     resource = GetCurrentResourceName(),
     framework = GetConvar('inventory:framework', 'esx'),
     playerslots = GetConvarInt('inventory:slots', 64),
     playerweight = GetConvarInt('inventory:weight', 30000),
-    target = GetConvarInt('inventory:target', 0) == 0,
+    target = GetConvarInt('inventory:target', 0) == 1,
     police = json.decode(GetConvar('inventory:police', '["police", "sheriff"]')),
     networkdumpsters = GetConvarInt('inventory:networkdumpsters', 0) == 1
 }
@@ -30,6 +29,8 @@ end)
 exports('sharedPlayerweight', function()
     return shared.playerweight
 end)
+
+
 
 
 shared.dropslots = GetConvarInt('inventory:dropslots', shared.playerslots)
@@ -103,6 +104,8 @@ else
         ignoreweapons = json.decode(GetConvar('inventory:ignoreweapons', '[]')),
         suppresspickups = GetConvarInt('inventory:suppresspickups', 1) == 1,
         disableweapons = GetConvarInt('inventory:disableweapons', 0) == 1,
+        disablesetupnotification = GetConvarInt('inventory:disablesetupnotification', 0) == 1,
+        enablestealcommand = GetConvarInt('inventory:enablestealcommand', 1) == 1,
     }
 
     local ignoreweapons = table.create(0, (client.ignoreweapons and #client.ignoreweapons or 0) + 3)
@@ -232,7 +235,7 @@ end
 
 if not LoadResourceFile(shared.resource, 'web/build/index.html') then
     return spamError(
-        'UI has not been built, refer to the documentation or download a release build.\n	^3https://overextended.dev/ox_inventory^0')
+        'UI has not been built, refer to the documentation or download a release build.\n	^3https://coxdocs.dev/ox_inventory^0')
 end
 
 -- No we're not going to support qtarget any longer.
