@@ -1961,7 +1961,7 @@ end)
 
 RegisterNUICallback('buyItem', function(data, cb)
 	---@type boolean, false | { [1]: number, [2]: SlotWithItem, [3]: SlotWithItem | false, [4]: number}, NotifyProps
-	local response, data, message = lib.callback.await('ox_inventory:buyItem', 100, data)
+local response, data, message = lib.callback.await('ox_inventory:buyItem', 100, data, actualPaymentType)
 
 	if data then
 		updateInventory({
