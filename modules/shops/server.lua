@@ -267,10 +267,10 @@ lib.callback.register('ox_inventory:buyItem', function(source, data, payment)
 
 	
 					if not canAfford then 
-						
+						local locales = exports['pinkFrog_inventoryAddon']:getUI_locales()
 						TriggerClientEvent('ox_lib:notify', source, {
-							title = Config.locales[Config.useLocale]['BANK_FAIL_TITLE'],
-							description = string.format(Config.locales[Config.useLocale]['BANK_FAIL_DESC'], price),
+							title = locales['BANK_FAIL_TITLE'],
+							description = string.format(locales['BANK_FAIL_DESC'], price),
 							type = 'error'
 						})
 				end

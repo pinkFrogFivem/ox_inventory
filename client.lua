@@ -696,63 +696,65 @@ exports('useSlot', useSlot)
 local function useButton(id, slot)
     if PlayerData.loaded and not invBusy and not lib.progressActive() then
         local item = PlayerData.inventory[slot]
-		local locales = exports['pinkFrog_inventoryAddon']:getUI_locales()
-		local optionRename = exports['pinkFrog_inventoryAddon']:canRenameAllItems()
-		local optionDescription = exports['pinkFrog_inventoryAddon']:canChangeDescription()
         if not item then return end
 
         local data = Items[item.name]
-        local buttons = data?.buttons
+        if not data then return end
 
-      
-        if not buttons then
-            buttons = {}
-            if optionRename or data.canRename then
-                table.insert(buttons, {
-                    label = locales['RENAME_ITEM'],
-                    action = 'renameItem'
-                })
-            end
-            if optionDescription or data.canChangeDescription then
-                table.insert(buttons, {
-                    label = locales['CHANGE_DESCRIPTION'],
-                    action = 'changeDescription'
-                })
-            end
-			if data.canThrow then
-				
-            table.insert(buttons, {
-            label = locales['THROW_ITEM'],
-            action = 'throwItem'
-		    })
-	        end
+        local locales = exports['pinkFrog_inventoryAddon']:getUI_locales()
+        local optionRename = exports['pinkFrog_inventoryAddon']:canRenameAllItems()
+        local optionDescription = exports['pinkFrog_inventoryAddon']:canChangeDescription()
 
-			if data.canPlaceOnGround then
-                table.insert(buttons, {
-                    label = locales['PLACE_ITEM_ON_GROUND'],
-                    action = 'placeItemOnGround'
-                })
-            end
-			
-			
-			
-            data.buttons = buttons
+        local buttons = {}
+
+        if optionRename or (not optionRename and data.canRename) then
+            buttons[#buttons+1] = {
+                label = locales['RENAME_ITEM'],
+                action = 'renameItem'
+            }
         end
 
+        if optionDescription or (not optionDescription and data.canChangeDescription) then
+            buttons[#buttons+1] = {
+                label = locales['CHANGE_DESCRIPTION'],
+                action = 'changeDescription'
+            }
+        end
 
+        if data.canThrow then
+            buttons[#buttons+1] = {
+                label = locales['THROW_ITEM'],
+                action = 'throwItem'
+            }
+        end
 
-        if buttons and buttons[id] then
-            if type(buttons[id].action) == 'function' then
-                buttons[id].action(slot)
-            elseif buttons[id].action == 'renameItem' then
-                TriggerEvent('pinkFrog:renameItem', slot)
-            elseif buttons[id].action == 'changeDescription' then
-                TriggerEvent('pinkFrog:changeItemDescription', slot)
-			elseif buttons[id].action == 'throwItem' then
-            TriggerEvent('pinkFrog:throwItem', slot, item.name, data.propThrow, data.weight)
-			elseif buttons[id].action == 'placeItemOnGround' then 
-				TriggerEvent('pinkFrog:placeItemOnGround', slot, item.name,  data.propThrow, data.weight)
+        if data.canPlaceOnGround then
+            buttons[#buttons+1] = {
+                label = locales['PLACE_ITEM_ON_GROUND'],
+                action = 'placeItemOnGround'
+            }
+        end
+
+        local baseButtons = data.buttons
+        if baseButtons then
+            for i = 1, #baseButtons do
+                buttons[#buttons+1] = baseButtons[i]
             end
+        end
+
+        local btn = buttons[id]
+        if not btn then return end
+
+        if type(btn.action) == 'function' then
+            btn.action(slot)
+        elseif btn.action == 'renameItem' then
+            TriggerEvent('pinkFrog:renameItem', slot)
+        elseif btn.action == 'changeDescription' then
+            TriggerEvent('pinkFrog:changeItemDescription', slot)
+        elseif btn.action == 'throwItem' then
+            TriggerEvent('pinkFrog:throwItem', slot, item.name, data.propThrow, data.weight)
+        elseif btn.action == 'placeItemOnGround' then 
+            TriggerEvent('pinkFrog:placeItemOnGround', slot, item.name, data.propThrow, data.weight)
         end
     end
 end
@@ -1267,41 +1269,21 @@ RegisterNetEvent('ox_inventory:setPlayerInventory', function(currentDrops, inven
 for _, v in pairs(Items --[[@as table<string, OxClientItem>]]) do
     local buttons = {}
 
-
     if optionRename or (not optionRename and v.canRename) then
-        table.insert(buttons, {
-            label = locales['RENAME_ITEM'],
-            action = 'renameItem'
-        })
+        table.insert(buttons, { label = locales['RENAME_ITEM'], action = 'renameItem' })
     end
-
-
 
     if optionDescription or (not optionDescription and v.canChangeDescription) then
-        table.insert(buttons, {
-            label = locales['CHANGE_DESCRIPTION'],
-            action = 'changeDescription'
-        })
+        table.insert(buttons, { label = locales['CHANGE_DESCRIPTION'], action = 'changeDescription' })
     end
 
+    if v.canThrow then
+        table.insert(buttons, { label = locales['THROW_ITEM'], action = 'throwItem' })
+    end
 
-
-	
-	if v.canThrow then
-    table.insert(buttons, {
-        label = locales['THROW_ITEM'],
-        action = 'throwItem'
-    })
-end
-
-	if v.canPlaceOnGround then
-	table.insert(buttons, {
-		label = locales['PLACE_ITEM_ON_GROUND'],
-		action = 'placeItemOnGround'
-	})
-	end
-
-
+    if v.canPlaceOnGround then
+        table.insert(buttons, { label = locales['PLACE_ITEM_ON_GROUND'], action = 'placeItemOnGround' })
+    end
 
     if v.buttons then
         for i = 1, #v.buttons do
