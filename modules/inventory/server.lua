@@ -1105,140 +1105,143 @@ exports('SetMaxWeight', Inventory.SetMaxWeight)
 ---@return boolean? success, string|SlotWithItem|nil response
 function Inventory.AddItem(inv, item, count, metadata, slot, cb)
 
-	
-	if type(item) ~= 'table' then item = Items(item) end
-	
-	if not item then return false, 'invalid_item' end
-	
-	inv = Inventory(inv) --[[@as OxInventory]]
-	
-	if not inv?.slots then return false, 'invalid_inventory' end
-	
-	local toSlot, slotMetadata, slotCount
-	local success, response = false
-	count = math.floor(count + 0.5)
-	metadata = assertMetadata(metadata)
+    if type(item) ~= 'table' then item = Items(item) end
+    if not item then return false, 'invalid_item' end
 
-	if slot then
-	
-		local slotData = inv.items[slot]
-		slotMetadata, slotCount = Items.Metadata(inv.id, item, metadata and table.clone(metadata) or {}, count)
+    inv = Inventory(inv)
+    if not inv?.slots then return false, 'invalid_inventory' end
 
-		if not slotData or (item.stack and slotData.name == item.name and table.matches(slotData.metadata, slotMetadata)) then
-			toSlot = slot
-		end
-	end
+    local src = inv?.player?.source or inv.owner
+    local toSlot, slotMetadata, slotCount
+    local success, response = false
+    count = math.floor(count + 0.5)
+    metadata = assertMetadata(metadata)
 
-	if not toSlot then
-	   local minSlot, maxSlot, exceptionsKeys = exports['pinkFrog_inventoryAddon']:getMinMaxClothesSlotWithExceptions()
-	   local itemKey = type(item) == "table" and item.name or tostring(item)
-	   local isClothesItem = exceptionsKeys[itemKey] or false
+    if slot then
+        local slotData = inv.items[slot]
+        slotMetadata, slotCount = Items.Metadata(inv.id, item, metadata and table.clone(metadata) or {}, count)
 
-		local items = inv.items
-		slotMetadata, slotCount = Items.Metadata(inv.id, item, metadata and table.clone(metadata) or {}, count)
+        if not slotData or (item.stack and slotData.name == item.name and table.matches(slotData.metadata, slotMetadata)) then
+            if exports['pinkFrog_inventoryAddon']:isSlotBlocked(src, slot, item.name) then
+                return false, 'inventory_full'
+            end
 
-		for i = 1, inv.slots do
-			local slotData = items[i]
+            toSlot = slot
+        end
+    end
 
-			if item.stack and slotData ~= nil and slotData.name == item.name and table.matches(slotData.metadata, slotMetadata) then
-				toSlot = i
-				break
-			elseif not item.stack and not slotData then
-				if not toSlot then toSlot = {} end
-
-				toSlot[#toSlot + 1] = { slot = i, count = slotCount, metadata = slotMetadata }
-
-				if count == slotCount then
-					break
-				end
-
-				count -= 1
-				slotMetadata, slotCount = Items.Metadata(inv.id, item, metadata and table.clone(metadata) or {}, count)
-			elseif not toSlot and not slotData then
-				toSlot = i
-			end
-		end
+    if not toSlot then
 
 
-		if minSlot and maxSlot and not isClothesItem then
-			if type(toSlot) == "number" then
-				if toSlot >= minSlot and toSlot <= maxSlot then
-					return false, 'inventory_full'
-				end
-			elseif type(toSlot) == "table" then
-				for _, slotData in ipairs(toSlot) do
-					if slotData.slot and slotData.slot >= minSlot and slotData.slot <= maxSlot then
-						return false, 'inventory_full'
-					end
-				end
-			end
-		end
-	end
+        local items = inv.items
+        slotMetadata, slotCount = Items.Metadata(inv.id, item, metadata and table.clone(metadata) or {}, count)
 
+        for i = 1, inv.slots do
+            local slotData = items[i]
 
-	if not toSlot then return false, 'inventory_full' end
+            if item.stack and slotData ~= nil and slotData.name == item.name then
 
-	inv.changed = true
+                if exports['pinkFrog_inventoryAddon']:isSlotBlocked(src, i, item.name) then
+                    return false, 'inventory_full'
+                end
 
-	local invokingResource = server.loglevel > 1 and GetInvokingResource()
-	local toSlotType = type(toSlot)
+                toSlot = i
+                break
 
-	if toSlotType == 'number' then
-		Inventory.SetSlot(inv, item, slotCount, slotMetadata, toSlot)
+            elseif not item.stack and not slotData then
+                if not toSlot then toSlot = {} end
 
-		if inv.player and server.syncInventory then
-			server.syncInventory(inv)
-		end
+                if exports['pinkFrog_inventoryAddon']:isSlotBlocked(src, i, item.name) then
+                    return false, 'inventory_full'
+                end
 
-		inv:syncSlotsWithClients({
-			{
-				item = inv.items[toSlot],
-				inventory = inv.id
-			}
-		}, true)
+                toSlot[#toSlot + 1] = { slot = i, count = slotCount, metadata = slotMetadata }
 
-		if invokingResource then
-			lib.logger(inv.owner, 'addItem', ('"%s" added %sx %s to "%s"'):format(invokingResource, count, item.name, inv.label))
-		end
+                if count == slotCount then break end
 
-		success = true
-		response = inv.items[toSlot]
-	elseif toSlotType == 'table' then
-		local added = 0
+                count -= 1
+                slotMetadata, slotCount = Items.Metadata(inv.id, item, metadata and table.clone(metadata) or {}, count)
 
-		for i = 1, #toSlot do
-			local data = toSlot[i]
-			added += data.count
-			Inventory.SetSlot(inv, item, data.count, data.metadata, data.slot)
-			toSlot[i] = { item = inv.items[data.slot], inventory = inv.id }
-		end
+            elseif not toSlot and not slotData then
 
-		if inv.player and server.syncInventory then
-			server.syncInventory(inv)
-		end
+                if exports['pinkFrog_inventoryAddon']:isSlotBlocked(src, i, item.name) then
+                    return false, 'inventory_full'
+                end
 
-		inv:syncSlotsWithClients(toSlot, true)
+                toSlot = i
+            end
+        end
 
-		if invokingResource then
-			lib.logger(inv.owner, 'addItem', ('"%s" added %sx %s to "%s"'):format(invokingResource, added, item.name, inv.label))
-		end
+    
+    end
 
-		for i = 1, #toSlot do
-			toSlot[i] = toSlot[i].item
-		end
+    if not toSlot then return false, 'inventory_full' end
 
-		success = true
-		response = toSlot
-	end
+    inv.changed = true
 
-	if cb then
-		return cb(success, response)
-	end
+    local invokingResource = server.loglevel > 1 and GetInvokingResource()
+    local toSlotType = type(toSlot)
 
-	return success, response
+    if toSlotType == 'number' then
+        Inventory.SetSlot(inv, item, slotCount, slotMetadata, toSlot)
+
+        if inv.player and server.syncInventory then
+            server.syncInventory(inv)
+        end
+
+        inv:syncSlotsWithClients({
+            {
+                item = inv.items[toSlot],
+                inventory = inv.id
+            }
+        }, true)
+
+        if invokingResource then
+            lib.logger(inv.owner, 'addItem',
+                ('"%s" added %sx %s to "%s"'):format(invokingResource, count, item.name, inv.label))
+        end
+
+        success = true
+        response = inv.items[toSlot]
+
+    elseif toSlotType == 'table' then
+        local added = 0
+
+        for i = 1, #toSlot do
+            local data = toSlot[i]
+            added += data.count
+            Inventory.SetSlot(inv, item, data.count, data.metadata, data.slot)
+            toSlot[i] = { item = inv.items[data.slot], inventory = inv.id }
+        end
+
+        if inv.player and server.syncInventory then
+            server.syncInventory(inv)
+        end
+
+        inv:syncSlotsWithClients(toSlot, true)
+
+        if invokingResource then
+            lib.logger(inv.owner, 'addItem',
+                ('"%s" added %sx %s to "%s"'):format(invokingResource, added, item.name, inv.label))
+        end
+
+        for i = 1, #toSlot do
+            toSlot[i] = toSlot[i].item
+        end
+
+        success = true
+        response = toSlot
+    end
+
+    if cb then return cb(success, response) end
+
+    return success, response
 end
 
+
 exports('AddItem', Inventory.AddItem)
+
+
 
 ---@param inv inventory
 ---@param search string|number slots|1, count|2

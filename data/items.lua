@@ -1,6 +1,5 @@
 return {
 
-	
 	['backpack'] = {
 		label = 'Extra Backpack',
 		weight = 5000,
