@@ -1,5 +1,4 @@
 return {
-
 	['backpack'] = {
 		label = 'Extra Backpack',
 		weight = 5000,
@@ -18,7 +17,7 @@ return {
 		rarity = 'epic', -- can be unique, rare, epic, legendary, mythic
 		canThrow = true, -- if true, then you can throw this item (only if Config.throwingSettings.enable = true in pinkFrog_inventoryAddon/config.lua)
 		-- if you enable canThrow without prop it's going to use default prop of bag 
-		-- propThrow = 'prop_nigel_bag_pickup', -- prop to show when you throw item (only if canThrow = true) 
+		propThrow = 'prop_nigel_bag_pickup', -- prop to show when you throw item (only if canThrow = true) 
 		client = {
 		   image = 'bags.png',
 		}

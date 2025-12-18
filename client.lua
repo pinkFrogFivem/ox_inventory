@@ -1406,7 +1406,7 @@ end
 			items = ItemData,
 			leftInventory = {
 				id = cache.playerId,
-				slots = shared.playerslots,
+				slots = 64,
 				items = PlayerData.inventory,
 				maxWeight = shared.playerweight,
 			},
