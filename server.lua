@@ -54,7 +54,7 @@ inventory[v.slot] = {name = item.name, label = item.label, weight = weight, slot
 	end
 
 	player.source = tonumber(player.source)
-	local inv = Inventory.Create(player.source, player.name, 'player', 64, totalWeight, shared.playerweight, player.identifier, inventory)
+	local inv = Inventory.Create(player.source, player.name, 'player', exports['pinkFrog_inventoryAddon']:getMaxSlots(), totalWeight, exports['pinkFrog_inventoryAddon']:getMaxWeight(), player.identifier, inventory)
 
 	if inv then
 		inv.player = server.setPlayerData(player)

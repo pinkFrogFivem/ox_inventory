@@ -16,8 +16,8 @@ end
 shared = {
     resource = GetCurrentResourceName(),
     framework = GetConvar('inventory:framework', 'esx'),
-    playerslots = GetConvarInt('inventory:slots', 64),
-    playerweight = GetConvarInt('inventory:weight', 30000),
+    playerslots = GetConvarInt('inventory:slots', 64), -- actual setting of slots is in pinkFrog_inventoryAddon/shared/config.lua
+    playerweight = GetConvarInt('inventory:weight', 15000), -- actual setting of weight is in pinkFrog_inventoryAddon/shared/config.lua
     target = GetConvarInt('inventory:target', 0) == 1,
     police = json.decode(GetConvar('inventory:police', '["police", "sheriff"]')),
     networkdumpsters = GetConvarInt('inventory:networkdumpsters', 0) == 1
@@ -35,7 +35,7 @@ end)
 
 
 shared.dropslots = GetConvarInt('inventory:dropslots', shared.playerslots)
-shared.dropweight = GetConvarInt('inventory:dropweight', shared.playerweight)
+shared.dropweight = 100000
 
 do
     if type(shared.police) == 'string' then

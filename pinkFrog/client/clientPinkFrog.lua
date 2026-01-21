@@ -1,6 +1,6 @@
 
 local stateSelf, notLoadedDataFromConfig, alwaysDisplay = false, false, false
-
+local blockKeyboard = false
 local actualDamagedBones = {}
 
 while GetResourceState('pinkFrog_inventoryAddon') ~= "started" do
@@ -34,6 +34,9 @@ RegisterNUICallback('getMainColor', function(data, cb)
             dataMainColor = ui.mainColor,
             dataSecondaryColor = ui.secondaryColor,
             dataCloseButtonColor = ui.closeButtonColor,
+            showWeightInItemSlot = ui.showWeightInItemSlot,
+            showSettingsButton = ui.showSettingsButton,
+            whereIsClothingPlacedInUI = ui.whereIsClothingPlacedInUI,
         }
     })
     SendNUIMessage({
@@ -119,6 +122,11 @@ RegisterNetEvent('pinkFrog:updateNUISlots', function(backPackData)
     })
 end)
 
+RegisterNUICallback('setClothesPosition', function(data,cb)
+    exports['pinkFrog_inventoryAddon']:setClothingPositionInUI(data.position)
+    cb({ success = true })
+end)
+
 
 RegisterNetEvent('pinkFrog_closeClonedPed', function(open)
 TriggerEvent('pinkFrog:removeClonedPedFromOxInventory') 
@@ -137,6 +145,17 @@ RegisterNetEvent('pinkFrog_inventoryAddon:updateClientDamage', function(damagedB
     })
 end)
 
+RegisterNUICallback('stopKeyBoardInFivem', function(data, cb)
+    if data.state then
+        SetNuiFocus(true, true)     
+        SetNuiFocusKeepInput(false)    
+    else
+        SetNuiFocus(true, true)  
+        SetNuiFocusKeepInput(true) 
+    end
+
+    cb({ success = true })
+end)
 
 -- RegisterNetEvent('pinkFrog_syncClonePed', function(open, inv)
 --     if open then 

@@ -415,7 +415,8 @@ return {
 			label = 'Micro SMG',
 			weight = 3000,
 			durability = 0.1,
-			ammoname = 'ammo-45'
+			ammoname = 'ammo-45',
+			rarity = 'unique',
 		},
 
 		['WEAPON_MILITARYRIFLE'] = {
@@ -576,7 +577,8 @@ return {
 			label = 'RPG',
 			weight = 5000,
 			durability = 0.3,
-			ammoname = 'ammo-rocket'
+			ammoname = 'ammo-rocket',
+			rarity = 'mythic',  
 		},
 
 		['WEAPON_SAWNOFFSHOTGUN'] = {
@@ -610,7 +612,8 @@ return {
 			label = 'Sniper Rifle',
 			weight = 5000,
 			durability = 0.5,
-			ammoname = 'ammo-sniper'
+			ammoname = 'ammo-sniper',
+			rarity = 'legendary',  
 		},
 
 		['WEAPON_SNOWBALL'] = {

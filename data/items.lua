@@ -1,4 +1,42 @@
 return {
+	
+	['aswaghanda'] = {
+		label = 'aswaghanda',
+		weight = 250,
+		stack = false,
+		consume = 1,
+		close = true,
+		description = 'Reduce stress by 50%',
+		client = {
+			export = 'pinkFrog_hud.useAswaghanda',
+		},
+	},
+
+	['melisa'] = {
+		label = 'melisa',
+		weight = 100,
+		stack = true,
+		consume = 1,
+		description = 'Reduce stress by 15%',
+		client = {
+			export = 'pinkFrog_hud.useMelisa',
+		},
+	},
+
+	
+	['joint_stress'] = {
+		label = 'Joint for stress',
+		weight = 100,
+		stack = true,
+		consume = 1,
+		description = 'Reduce stress by 35%',
+		client = {
+			export = 'pinkFrog_hud.useJointStress',
+		},
+	},
+
+	
+
 	['backpack'] = {
 		label = 'Extra Backpack',
 		weight = 5000,
@@ -228,18 +266,13 @@ return {
 	description = nil,
 },
 
-
-   ['radio'] = {
+  ['radio'] = {
 		label = 'Radio',
-		weight = 250,
+		weight = 1000,
 		stack = false,
 		consume = 0,
 		close = true,
 		durability = 0.1,
-		-- rarity = 'unique',  -- can be unique, rare, epic, legendary, mythic
-			-- example
-	    canRename = true, -- if true, then you can rename this item (only if Config.canRenameAllItems = false in config.lua)
-	    canChangeDescription = true, -- if true, then you can change description for this item (only if Config.canChangeDescription = false in config.lua)
 		canThrow = true, -- if true, then you can throw this item (only if Config.throwingSettings.enable = true in pinkFrog_inventoryAddon/config.lua)
 		propThrow = 'prop_cs_hand_radio', -- prop to show when you throw item (only if canThrow = true)
 		description = 'Used to operate the radio',
@@ -450,6 +483,8 @@ return {
 
 	['money'] = {
 		label = 'Money',
+		canThrow = true,
+		propThrow = 'prop_anim_cash_pile_01',
 	},
 
 	['mustard'] = {
@@ -505,6 +540,9 @@ return {
 	['scrapmetal'] = {
 		label = 'Scrap Metal',
 		weight = 80,
+		client = {
+		   image = 'bags.png',
+		}
 	},
 
 	["alive_chicken"] = {

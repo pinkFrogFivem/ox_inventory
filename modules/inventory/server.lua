@@ -574,7 +574,7 @@ function Inventory.Create(id, label, invType, slots, weight, maxWeight, owner, i
 		type = invType,
 		slots = slots,
 		weight = weight,
-		maxWeight = maxWeight or shared.playerweight,
+		maxWeight = exports['pinkFrog_inventoryAddon']:getMaxWeight(),
 		owner = owner,
 		items = type(items) == 'table' and items,
 		open = false,
@@ -1139,21 +1139,18 @@ function Inventory.AddItem(inv, item, count, metadata, slot, cb)
         for i = 1, inv.slots do
             local slotData = items[i]
 
+			-- If a slot is blocked by pinkFrog rules (backpack/clothes), skip it and keep searching.
+			-- Returning inventory_full here would be wrong because there may be usable slots later.
+			if exports['pinkFrog_inventoryAddon']:isSlotBlocked(src, i, item.name) then
+				goto continue
+			end
+
             if item.stack and slotData ~= nil and slotData.name == item.name then
-
-                if exports['pinkFrog_inventoryAddon']:isSlotBlocked(src, i, item.name) then
-                    return false, 'inventory_full'
-                end
-
                 toSlot = i
                 break
 
             elseif not item.stack and not slotData then
                 if not toSlot then toSlot = {} end
-
-                if exports['pinkFrog_inventoryAddon']:isSlotBlocked(src, i, item.name) then
-                    return false, 'inventory_full'
-                end
 
                 toSlot[#toSlot + 1] = { slot = i, count = slotCount, metadata = slotMetadata }
 
@@ -1163,13 +1160,10 @@ function Inventory.AddItem(inv, item, count, metadata, slot, cb)
                 slotMetadata, slotCount = Items.Metadata(inv.id, item, metadata and table.clone(metadata) or {}, count)
 
             elseif not toSlot and not slotData then
-
-                if exports['pinkFrog_inventoryAddon']:isSlotBlocked(src, i, item.name) then
-                    return false, 'inventory_full'
-                end
-
                 toSlot = i
             end
+
+			::continue::
         end
 
     

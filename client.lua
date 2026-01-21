@@ -939,6 +939,7 @@ function client.closeInventory(server)
 		TriggerEvent('pinkFrog_syncClonePed', nil, false)
 		SetNuiFocus(false, false)
 		SetNuiFocusKeepInput(false)
+
 		Utils.blurOut()
 		closeTrunk()
 		SendNUIMessage({ action = 'closeInventory' })
@@ -954,6 +955,11 @@ function client.closeInventory(server)
 		currentInventory = nil
 		plyState.invOpen = false
 		defaultInventory.coords = nil
+		-- fallback for search input and fast closing
+		Wait(100)
+		SetNuiFocus(false, false)
+		SetNuiFocusKeepInput(false)
+
 	end
 end
 
@@ -1249,7 +1255,7 @@ RegisterNetEvent('ox_inventory:setPlayerInventory', function(currentDrops, inven
 	PlayerData = player
 	PlayerData.id = cache.playerId
 	PlayerData.source = cache.serverId
-    PlayerData.maxWeight = shared.playerweight
+    PlayerData.maxWeight = exports['pinkFrog_inventoryAddon']:getMaxWeight()
 	local locales = exports['pinkFrog_inventoryAddon']:getUI_locales()
 	local optionDescription = exports['pinkFrog_inventoryAddon']:canChangeDescription()
 	local optionRename = exports['pinkFrog_inventoryAddon']:canRenameAllItems()
@@ -1406,7 +1412,7 @@ end
 			items = ItemData,
 			leftInventory = {
 				id = cache.playerId,
-				slots = 64,
+				slots = exports['pinkFrog_inventoryAddon']:getMaxSlots(),
 				items = PlayerData.inventory,
 				maxWeight = shared.playerweight,
 			},
