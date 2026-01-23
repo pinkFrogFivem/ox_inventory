@@ -574,7 +574,7 @@ function Inventory.Create(id, label, invType, slots, weight, maxWeight, owner, i
 		type = invType,
 		slots = slots,
 		weight = weight,
-		maxWeight = exports['pinkFrog_inventoryAddon']:getMaxWeight(),
+		maxWeight = maxWeight or exports['pinkFrog_inventoryAddon']:getMaxWeight(),
 		owner = owner,
 		items = type(items) == 'table' and items,
 		open = false,
