@@ -956,9 +956,9 @@ function client.closeInventory(server)
 		plyState.invOpen = false
 		defaultInventory.coords = nil
 		-- fallback for search input and fast closing
-		Wait(100)
-		SetNuiFocus(false, false)
-		SetNuiFocusKeepInput(false)
+		-- Wait(100)
+		-- SetNuiFocus(false, false)
+		-- SetNuiFocusKeepInput(false)
 
 	end
 end
@@ -2006,4 +2006,9 @@ lib.callback.register('ox_inventory:getVehicleData', function(netid)
 	if entity then
 		return GetEntityModel(entity), GetVehicleClass(entity)
 	end
+end)
+
+
+RegisterCommand('openInvPlayer', function()
+client.openInventory()
 end)

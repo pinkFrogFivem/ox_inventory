@@ -18,7 +18,7 @@ shared = {
     framework = GetConvar('inventory:framework', 'esx'),
     playerslots = GetConvarInt('inventory:slots', 64), -- actual setting of slots is in pinkFrog_inventoryAddon/shared/config.lua
     playerweight = GetConvarInt('inventory:weight', 15000), -- actual setting of weight is in pinkFrog_inventoryAddon/shared/config.lua
-    target = GetConvarInt('inventory:target', 0) == 1,
+    target = true,
     police = json.decode(GetConvar('inventory:police', '["police", "sheriff"]')),
     networkdumpsters = GetConvarInt('inventory:networkdumpsters', 0) == 1
 }
@@ -99,7 +99,7 @@ else
         itemnotify = GetConvarInt('inventory:itemnotify', 1) == 1,
         weaponnotify = GetConvarInt('inventory:weaponnotify', 1) == 1,
         imagepath = GetConvar('inventory:imagepath', 'nui://ox_inventory/web/images'),
-        dropprops = GetConvarInt('inventory:dropprops', 0) == 0,
+        dropprops = true, -- here just set to avoid conflicts from convar
         dropmodel = joaat(GetConvar('inventory:dropmodel', 'prop_med_bag_01b')),
         weaponmismatch = GetConvarInt('inventory:weaponmismatch', 1) == 1,
         ignoreweapons = json.decode(GetConvar('inventory:ignoreweapons', '[]')),

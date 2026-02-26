@@ -66,7 +66,7 @@ function OxInventory:syncSlotsWithClients(slots, syncOwner)
             local target = Inventories[playerId]
 
             if target then
-			    TriggerClientEvent('ox_inventory:updateSlots', playerId, slots, target.weight)
+			    TriggerClientEvent('ox_inventory:updateSlots', playerId, slots, {left=target.weight, right=self.weight})
             end
 		end
 	end
@@ -1117,33 +1117,53 @@ function Inventory.AddItem(inv, item, count, metadata, slot, cb)
     count = math.floor(count + 0.5)
     metadata = assertMetadata(metadata)
 
+
+       local maxAllowedSlots = inv.slots
+    if inv.player and type(src) == 'number' then
+        local availableSlots = exports['pinkFrog_inventoryAddon']:getAvailableSlots(src)
+        if type(availableSlots) == 'number' and availableSlots > 0 then
+            maxAllowedSlots = math.min(inv.slots, math.floor(availableSlots))
+        end
+    end
+
+    local function isSlotAllowed(slotId)
+        return type(slotId) == 'number' and slotId >= 1 and slotId <= maxAllowedSlots
+    end
+
+    local function isClothesSlot(slotId)
+        if not (inv.player and type(src) == 'number') then return false end
+        local ok, result = pcall(function()
+            return exports['pinkFrog_inventoryAddon']:isClothesSlot(slotId)
+        end)
+        return ok and result == true
+    end
+
     if slot then
+        if type(slot) ~= 'number' or slot < 1 or slot > inv.slots then
+            return false, 'inventory_full'
+        end
+
+        local slotIsClothes = isClothesSlot(slot)
+
+
+        if not slotIsClothes and not isSlotAllowed(slot) then
+            return false, 'inventory_full'
+        end
+
         local slotData = inv.items[slot]
         slotMetadata, slotCount = Items.Metadata(inv.id, item, metadata and table.clone(metadata) or {}, count)
 
         if not slotData or (item.stack and slotData.name == item.name and table.matches(slotData.metadata, slotMetadata)) then
-            if exports['pinkFrog_inventoryAddon']:isSlotBlocked(src, slot, item.name) then
-                return false, 'inventory_full'
-            end
-
             toSlot = slot
         end
     end
 
     if not toSlot then
-
-
         local items = inv.items
         slotMetadata, slotCount = Items.Metadata(inv.id, item, metadata and table.clone(metadata) or {}, count)
 
-        for i = 1, inv.slots do
+        for i = 1, maxAllowedSlots do
             local slotData = items[i]
-
-			-- If a slot is blocked by pinkFrog rules (backpack/clothes), skip it and keep searching.
-			-- Returning inventory_full here would be wrong because there may be usable slots later.
-			if exports['pinkFrog_inventoryAddon']:isSlotBlocked(src, i, item.name) then
-				goto continue
-			end
 
             if item.stack and slotData ~= nil and slotData.name == item.name then
                 toSlot = i
@@ -1162,11 +1182,7 @@ function Inventory.AddItem(inv, item, count, metadata, slot, cb)
             elseif not toSlot and not slotData then
                 toSlot = i
             end
-
-			::continue::
         end
-
-    
     end
 
     if not toSlot then return false, 'inventory_full' end

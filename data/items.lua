@@ -1,4 +1,5 @@
 return {
+
 	
 	['aswaghanda'] = {
 		label = 'aswaghanda',
@@ -46,7 +47,7 @@ return {
 		rarity = 'unique', -- can be unique, rare, epic, legendary, mythic
 	},
 
-		['extrabag'] = {
+	['extrabag'] = {
 		label = 'Extra Bag',
 		weight = 7000,
 		stack = true,
@@ -80,13 +81,17 @@ return {
 	},
 
 	-- it's exmample you can register as many items as you want below
-	['plate_armor'] = {
+  ['plate_armor'] = {
 	label = 'Plate armor',
 	weight = 100,
 	stack = true,
 	close = true,
 	rarity = 'rare',
+	consume = 0,
 	description = 'Adds 50 extra protection to your bulletproof vest',
+	client = {
+		   export = 'pinkFrog_inventoryAddon.fasterUsePlate',
+	},
   },
 
  
@@ -96,10 +101,12 @@ return {
 	stack = true,
 	close = true,
 	rarity = 'rare',
+	consume = 0,
 	description = 'Adds 75 extra protection to your bulletproof vest',
 	client = {
 		   image = 'plate_armor.png',
-	}
+		   export = 'pinkFrog_inventoryAddon.fasterUsePlate',
+	},
    },
 
     
@@ -109,11 +116,13 @@ return {
 	stack = true,
 	close = true,
 	rarity = 'rare',
+	consume = 0,
 	description = 'Adds 100 extra protection to your bulletproof vest',
 	client = {
 		   image = 'plate_armor.png',
-	}
-   },
+		   export = 'pinkFrog_inventoryAddon.fasterUsePlate',
+	},
+},
 
 
 	-- You need to add the following items to your ox_inventory/data/items.lua file

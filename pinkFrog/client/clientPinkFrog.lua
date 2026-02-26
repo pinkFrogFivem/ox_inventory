@@ -147,10 +147,8 @@ end)
 
 RegisterNUICallback('stopKeyBoardInFivem', function(data, cb)
     if data.state then
-        SetNuiFocus(true, true)     
         SetNuiFocusKeepInput(false)    
     else
-        SetNuiFocus(true, true)  
         SetNuiFocusKeepInput(true) 
     end
 
